@@ -1,0 +1,56 @@
+Type,Abbreviation,Variable,Weight,NextLevel,MaterialityFilter,Order
+EPI,EPI,Environmental Performance Index,,,,1
+PolicyObjective,ECO,Ecosystem Vitality,0.42,EPI,,20
+IssueCategory,BDH,Biodiversity & Habitat,0.4285,ECO,,21
+Indicator,TBN,Terrestrial biome protection (national weights),0.2222,BDH,,22
+Indicator,TBG,Terrestrial biome protection (global weights),0.2222,BDH,,23
+Indicator,MPA,Marine protected areas,0.2222,BDH,SEA,24
+Indicator,PAR,Protected Areas Representativeness Index,0.13888,BDH,,25
+Indicator,BHV,Biodiversity Habitat Index,0.08335,BDH,,28
+Indicator,SPI,Species Protection Index,0.08335,BDH,,27
+Indicator,SHI,Species Habitat Index,0.0278,BDH,,26
+IssueCategory,ECS,Ecosystem Services,0.19045,ECO,ESF,29
+Indicator,TCL,Tree cover loss,0.75,ECS,,30
+Indicator,GRL,Grassland loss,0.125,ECS,,31
+Indicator,WTL,Wetland loss,0.125,ECS,,32
+IssueCategory,FSH,Fisheries,0.11905,ECO,SEA,33
+Indicator,FSS,Fish Stock Status,0.36,FSH,SEA,34
+Indicator,RMS,Marine Trophic Index,0.36,FSH,SEA,35
+Indicator,FTD,Fish caught by trawling,0.28,FSH,SEA,36
+IssueCategory,ACD,Acidification,0.09524,ECO,,37
+Indicator,SDA,Adjusted emissions growth rate for sulfer dioxide,0.5,ACD,,38
+Indicator,NXA,Adjusted emissions growth rate for nitrous oxides,0.5,ACD,,39
+IssueCategory,AGR,Agriculture,0.09524,ECO,,40
+Indicator,SPU,Sustainable Pesticide Use,0.5,AGR,,41
+Indicator,SNM,Sustainable Nitrogen Management Index,0.5,AGR,,42
+IssueCategory,WRS,Water Resources,0.0715,ECO,,43
+Indicator,WWT,Wastewater treatment,1,WRS,,44
+PolicyObjective,HLT,Environmental Health,0.2,EPI,,2
+IssueCategory,AIR,Air Quality,0.55,HLT,,3
+Indicator,PMD,PM2.5 exposure,0.4727,AIR,,5
+Indicator,HAD,Household solid fuels,0.3818,AIR,,4
+Indicator,OZD,Ozone exposure,0.04545,AIR,,6
+Indicator,NOE,NOx exposure,0.04545,AIR,,7
+Indicator,SOE,SO2 exposure,0.0182,AIR,,8
+Indicator,COE,CO exposure,0.0182,AIR,,9
+Indicator,VOE,VOC exposure,0.0182,AIR,,10
+IssueCategory,H2O,Sanitation & Drinking Water,0.25,HLT,,11
+Indicator,USD,Unsafe sanitation ,0.4,H2O,,12
+Indicator,UWD,Unsafe drinking water,0.6,H2O,,13
+IssueCategory,HMT,Heavy Metals,0.1,HLT,,14
+Indicator,PBD,Lead exposure,1,HMT,,15
+IssueCategory,WMG,Waste Management,0.1,HLT,,16
+Indicator,MSW,Controlled solid waste,0.5,WMG,,17
+Indicator,REC,Recycling,0.25,WMG,,18
+Indicator,OCP,Ocean Plastics,0.25,WMG,SEA,19
+PolicyObjective,PCC,Climate Change Policy Objective,0.38,EPI,,45
+IssueCategory,CCH,Climate Change,1,PCC,,46
+Indicator,CDA,Adjusted emissions growth rate for carbon dioxide,0.36317,CCH,,47
+Indicator,CHA,Adjusted emissions growth rate for methane,0.08684,CCH,,48
+Indicator,FGA,Adjusted emissions growth rate for F-gases,0.03684,CCH,,49
+Indicator,NDA,Adjusted emissions growth rate for nitrous oxide,0.01842,CCH,,50
+Indicator,BCA,Adjusted emissions growth rate for black carbon,0.026315,CCH,,51
+Indicator,GHN,Projected GHG Emissions in 2050,0.36317,CCH,,52
+Indicator,LCB,Growth rate in carbon dioxide emissions from land cover,0.03947,CCH,,52
+Indicator,GIB,Greenhouse gas intensity growth rate,0.03947,CCH,,53
+Indicator,GHP,Greenhouse gas emissions per capita,0.026315,CCH,,54
