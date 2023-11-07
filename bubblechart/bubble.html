@@ -1,0 +1,152 @@
+<html>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/simple-statistics@7.7.0/dist/simple-statistics.min.js"></script>
+  <script src="bubble.js"></script>
+  <style></style>
+  <body>
+    <h1>Bubble Chart</h1>
+    <svg id="svg_for_bubble" style="width: 1000px; height: 400px"></svg>
+
+    <script>
+      let vis = new Bubble("svg_for_bubble");
+    </script>
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <style>
+        .navbar-nav .nav-item.active .nav-link {
+            color: #000; /* Change this to the color you want */
+        }
+        .custom-margin {
+            margin-top: 9rem;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 2rem;
+            opacity: 0; /* Set initial opacity to 0 */
+            transition: opacity 0.5s ease; /* Add transition for opacity property */
+        }
+
+        .custom-margin.active {
+            opacity: 1; /* When the 'active' class is added, set opacity to 1 */
+        }
+        .custom-image {
+            width: 100%;
+            max-width: none;
+            height: auto;
+        }
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(100%);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .custom-margin {
+            margin-top: 9rem;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 2rem;
+            margin-left: 4rem;
+            margin-right: 4rem;
+            max-width: 800px;
+            animation: slideUp 0.5s ease; /* Apply the animation */
+        }
+        body {
+            background-image: url('https://images.pling.com/img/00/00/62/84/47/1946670/green-desktop-wallpaper-hd-landscape-mountain-lake-grass-sky-clouds-1920x1080.jpg'); /* Replace with the actual path to your image */
+            background-size: cover; /* This will cover the entire viewport */
+            background-repeat: no-repeat;
+            background-attachment: fixed; /* This will make the background fixed, so it won't scroll with the content */
+        }
+    </style>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>EPI Raw Data Dashboard</title>
+</head>
+<body>
+<!-- Nav bar -->
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #f9fbff;">
+    <ul class="navbar-nav mr-auto">
+        <!-- Home Button -->
+        <a class="navbar-brand" href="#">EPI Dashboard</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Data Resource</a>
+                </li>
+                <!-- Drop Down Button -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        Data Visualizations
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="#">Bubble Chart</a>
+                        <a class="dropdown-item" href="#">Pie Chart</a>
+                        <a class="dropdown-item" href="#">World Map</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </ul>
+    <!-- About Us Button on the left -->
+    <ul class="nav justify-content-end">
+        <li class="nav-item">
+            <a class="nav-link" href="#">About Us</a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Content Section -->
+<div class="container custom-margin">
+    <div class="row">
+        <div class="col-md-7">
+            <h1 class="display-5 title">2022 EPI Raw Data </br>Visual Analytics Dashboard</h1>
+
+            <p class="subtitle">
+                Welcome to the 2022 Environmental Performance Index (EPI) Dashboard, a dynamic
+                platform designed to analyze and understand global environmental data. This project
+                delves into details of EPI raw data from the World Economic Outlook (WEO) Database.
+                Tailored for researchers, students, policymakers, and anyone passionate about
+                environmental insights, this dashboard offers a versatile toolkit to explore trends
+                in environmental performance across various dimensions, regions, and policy units.
+                Dive deep, uncover correlations with socioeconomic factors, and embark on a journey
+                of discovery with this powerful analytical tool.
+
+            </p>
+            <a class="btn btn-lg" href="#start_link" target="_blank" role="button" style="background-color: #a1c9ff;">Get started</a>
+            <a class="btn btn-lg" href="#server_link" target="_blank" role="button" style="background-color: #e0eaff;">Learn More</a>
+        </div>
+        <div class="col-md-5 d-flex align-items-center">
+            <img src="https://cdn.osxdaily.com/wp-content/uploads/2012/12/usa-at-night-wallpaper.jpeg" alt="global picture" class="custom-image">
+        </div>
+    </div>
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelector('.custom-margin').classList.add('active');
+    });
+</script>
+</body>
+</html>
+  </body>
+</html>
