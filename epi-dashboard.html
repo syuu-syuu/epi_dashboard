@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+	<script src="https://unpkg.com/simple-statistics@7.7.0/dist/simple-statistics.min.js"></script>
+	<script src="epi-dashboard.js"></script>
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- select economy group -->
+    <p>Select a class:
+		<!-- <select onchange="vis.render(this.options[this.selectedIndex].value);"> -->
+        <select id="economy-select" onchange="vis.setSelection(this.value)">
+			<option value="world">World</option>
+			<option value='euro-area'>Euro Area</option>
+			<option value='major-advanced'>Major Advanced Economies (G7)</option>
+			<option value="other-advanced">Other Advanced Economies (Excludes G7 and Euro Area)</option>
+			<option value="ED-A">Emerging and Developing Asia</option>
+            <option value="ED-E">Emerging and Developing Europe</option>
+            <option value="LA-C">Latin America and the Caribbean</option>
+            <option value="ME-CA">Middle East and Central Asia</option>
+            <option value="SSA">Sub-Saharan Africa</option>
+		</select>
+        <div id="slider-container"><input type="range" min="1980" max="2023" value="1980" id="year-slider"></div>
+        <p id="year">Year: <span id="year-value">1980</span></p>
+	</p>
+    <!-- svg for the graph -->
+    <svg id="svg_graph" style="width: 1000px; height: 600px;"></svg>
+    <script>
+        vis = new scatterPlot("svg_graph");
+        let slider = document.getElementById("year-slider");
+
+        slider.addEventListener('input', function(){
+            console.log('year val: ', slider.value);
+           vis.setYear(slider.value);
+        })
+
+    </script>
+</body>
+</html>
