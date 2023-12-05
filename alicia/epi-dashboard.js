@@ -15,12 +15,15 @@ class scatterPlot {
         //scales
         //x is gdp, y is emissions
         this.x = d3.scaleLinear()
-            .domain([0, 50000])
+            .domain([0, 150000])
             .range([margin, 1000 - margin]);
 
         this.y = d3.scaleLinear()
-            .domain([0, 5000])
+            .domain([0, 10000])
             .range([500 - margin, 0]);
+
+        //color by economy group
+        this.group_color = d3.scaleOrdinal(d3.schemeCategory10);
 
         //axes
         this.svg.append('g')
@@ -32,7 +35,7 @@ class scatterPlot {
             .attr("x", 500)
             .attr("y", 525)
             .style("text-anchor", "middle")
-            .text("GDP per Capita");
+            .text("Emissions Per Capita");
 
         this.svg.append('g')
             .attr("class", "axis")
@@ -44,7 +47,7 @@ class scatterPlot {
             .attr("x", 250)
             .attr("y", -3)
             .style("text-anchor", "middle")
-            .text("Emissions Per Capita");
+            .text("GDP per Capita");
     }
 
     setSelection(group) {
@@ -55,13 +58,10 @@ class scatterPlot {
 
     setYear(year) {
         this.year = year;
-        console.log("year", this.year);
         this.render();
-        console.log("after year render");
     }
 
     render() {
-        let enter_btn = document.getElementById("enter-btn");
         let slider = document.getElementById("year-slider");
         let output = document.getElementById("year-value");
         output.innerHTML = slider.value;
@@ -83,6 +83,9 @@ class scatterPlot {
         }
         ).then(data => {
             this.filtered_gdp = data.filter(item => {
+                if (this.selected_group == "world"){
+                    return true;
+                }
                 return item.economy_group === this.selected_group;
             }
             )
@@ -119,7 +122,7 @@ class scatterPlot {
 
                 circles.join(
                     enter => enter.append("circle")
-                        .style("fill", "#d84e51ff")
+                        .style("fill", d => this.group_color(d.economy_group))
                         .style("fill-opacity", 0)
                         .attr("r", 5)
                         .attr("class", "dot")
@@ -129,8 +132,8 @@ class scatterPlot {
                             const gdpYearValue = d.gdp_year[this.year];
                             // console.log('gdp_year value:', gdpYearValue);
                             // const cyValue = this.y(gdpYearValue);
-                            const sanitizedValue = parseFloat(gdpYearValue.replace(/,/g, ''));
-                            const cyValue = this.y(sanitizedValue);
+                            this.sanitizedValue = parseFloat(gdpYearValue.replace(/,/g, ''));
+                            const cyValue = this.y(this.sanitizedValue);
                             console.log('cy value:', cyValue);
 
                             // return cyValue;
@@ -150,12 +153,20 @@ class scatterPlot {
                     .data(this.init_emissions, d => d.iso)
                     .attr("cx", d => {
                         const emissionsYear = d.emissions_year[this.year];
-                        const sanitizedEmissions = parseFloat(emissionsYear.replace(/,/g, ''));
-                        const cxVal = this.x(sanitizedEmissions);
+                        this.sanitizedEmissions = parseFloat(emissionsYear.replace(/,/g, ''));
+                        const cxVal = this.x(this.sanitizedEmissions);
                         if (!isNaN(cxVal)) {
                             return cxVal;
                         }
                     })
+                    .attr("data-tippy-content", d => {
+                        let html = "<table>" 
+                        + "<tr><th colspan='2'>Country: " + d.country + "</th></tr>"
+                        + "<tr><td>GDP per Capita:</td><td>" + this.sanitizedValue + "</td></tr>"
+                        + "<tr><td>Emissions per Capita:</td><td>" + d.emissions_year[this.year] + "</td></tr>"
+                        + "</table>"
+                        return html;
+                    }).call(selection => tippy(selection.nodes(), {allowHTML: true}))
             })
         })
     }

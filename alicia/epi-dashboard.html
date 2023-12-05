@@ -9,6 +9,8 @@
 	<script src="epi-dashboard.js"></script>
     <link rel="stylesheet" type="text/css" href="main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script> 
+    <script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Didact+Gothic&display=swap" rel="stylesheet">
 </head>
@@ -31,7 +33,7 @@
         <p id="year">Year: <span id="year-value">1980</span></p>
 	</p>
     <!-- svg for the graph -->
-    <svg id="svg_graph" style="width: 1000px; height: 600px;"></svg>
+    <svg id="svg_graph" style="width: 1000px; height: 500px;"></svg>
     <script>
         vis = new scatterPlot("svg_graph");
         let slider = document.getElementById("year-slider");
