@@ -9,17 +9,19 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Belleza&family=Didact+Gothic&display=swap" rel="stylesheet">
 
     <title>EPI Raw Data Dashboard</title>
 </head>
 
-<body>
+<body id="bootstrap-override">
     <!-- Nav bar -->
     <nav class="navbar navbar-expand-lg navbar-light"x>
         <ul class="navbar-nav mr-auto">
             <!-- Home Button -->
-            <a class="navbar-brand" href="#">EPI Dashboard</a>
+            <a class="navbar-brand" href="#" id="bootstap-override">EPI Dashboard</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -61,7 +63,7 @@
     <div class="container custom-margin">
         <div class="row">
             <div class="col-md-7">
-                <h1 class="display-5 title">2022 EPI Raw Data </br>Visual Analytics Dashboard</h1>
+                <h1 class="display-5 title" id="bootstap-override">2022 EPI Raw Data </br>Visual Analytics Dashboard</h1>
 
                 <p class="subtitle">
                     Welcome to the 2022 Environmental Performance Index (EPI) Dashboard, a dynamic
@@ -74,9 +76,9 @@
                     of discovery with this powerful analytical tool.
 
                 </p>
-                <a class="btn btn-lg" href="#start_link" target="_blank" role="button"
+                <a class="btn btn-lg" href="alicia/epi-dashboard.html" target="_blank" role="button"
                     style="background-color: #a1c9ff;">Get started</a>
-                <a class="btn btn-lg" href="#server_link" target="_blank" role="button"
+                <a class="btn btn-lg" href="https://epi.yale.edu/about-epi" target="_blank" role="button"
                     style="background-color: #e0eaff;">Learn More</a>
             </div>
             <div class="col-md-5 d-flex align-items-center">

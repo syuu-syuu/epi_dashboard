@@ -1,5 +1,10 @@
-body {
+#bootstrap-override {
     background-color: #f0edeeff;
+    font-family: 'Didact Gothic', sans-serif;
+}
+
+#bootstrap-override h1 {
+    font-family: 'Belleza', sans-serif;
     font-family: 'Didact Gothic', sans-serif;
 }
 
