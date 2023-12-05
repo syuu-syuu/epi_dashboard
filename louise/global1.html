@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v4.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+
+<!-- Create an element where the map will take place -->
+<svg id="my_dataviz" width="800" height="600"></svg>
+<div id="tooltip" style="position: absolute; opacity: 0;"></div>
+<br>
+
+<!-- Year selection dropdown -->
+<select id="yearSelector"></select>
+
+<script>
+    // The svg
+    var svg = d3.select("svg"),
+        width = +svg.attr("width"),
+        height = +svg.attr("height");
+
+    // Define your countryData as an empty object
+    var countryData = {};
+
+    // Map and projection
+    var projection = d3.geoNaturalEarth1()
+        .scale(width / 1.8 / Math.PI) // Adjusted scale for larger size
+        .translate([width / 2, height / 2]);
+
+    // Create a color scale
+    var colorScale = d3.scaleSequential(d3.interpolateRdYlBu);
+
+    // Load data from CSV file
+    d3.csv("country_data.csv", function(data) {
+        // Process loaded data and assign random values to country codes
+        data.forEach(function(d) {
+            var randomValue = Math.random() * 100; // Generating random numbers between 0 to 100
+            countryData[d["Country Code"]] = randomValue; // Assign random values to country codes
+        });
+
+        // Populate the dropdown options with available country codes
+        var countryCodes = Object.keys(countryData);
+        var selector = d3.select("#yearSelector");
+
+        selector.selectAll("option")
+            .data(countryCodes)
+            .enter().append("option")
+            .text(function(d) { return d; });
+
+        // Initial map generation based on the selected country code
+        updateMap(countryData, countryCodes[0]);
+
+        // On change of the dropdown, update the map
+        selector.on("change", function() {
+            var selectedCountryCode = this.value;
+            updateMap(countryData, selectedCountryCode);
+        });
+    });
+
+    function updateMap(countryData, selectedCountryCode) {
+        // Set domain for the color scale
+        var values = Object.values(countryData).filter(value => !isNaN(value)); // Remove any NaN values
+        colorScale.domain(d3.extent(values));
+
+        // Load external data and draw the map
+        d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson", function(geoData){
+            // Draw the map
+            svg.selectAll("path").remove(); // Remove existing paths before redrawing
+            svg.append("g")
+                .selectAll("path")
+                .data(geoData.features)
+                .enter().append("path")
+                .attr("fill", function(d) {
+                    // Get the random value for the current country using iso_a3
+                    var value = countryData[d.properties.iso_a3]; // Use iso_a3 for country code
+                    return isNaN(value) ? '#ccc' : colorScale(value); // Set a default color for missing data
+                })
+                .attr("d", d3.geoPath()
+                    .projection(projection)
+                )
+                .style("stroke", "#fff")
+                .on("mouseover", function(d) {
+                    var countryName = d.properties.name; // Get the country name
+                    var iso_a3 = d.properties.iso_a3; // Get the country ISO code
+                    var value = countryData[iso_a3]; // Get the value for that country
+                    // Show tooltip on mouseover
+                    d3.select("#tooltip")
+                        .style("opacity", 0.9)
+                        .html(`<strong>${countryName}</strong>: ${value}`)
+                        .style("left", (d3.event.pageX) + "px")
+                        .style("top", (d3.event.pageY - 28) + "px");
+                })
+                .on("mouseout", function() {
+                    // Hide tooltip on mouseout
+                    d3.select("#tooltip").style("opacity", 0);
+                });
+        });
+    }
+</script>
