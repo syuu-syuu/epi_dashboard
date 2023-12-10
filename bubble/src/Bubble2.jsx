@@ -1,7 +1,17 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
-import { Select } from "antd";
-import { useState } from "react";
+
+import * as React from "react";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Checkbox from "@mui/material/Checkbox";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import ListItemText from "@mui/material/ListItemText";
+import Box from "@mui/material/Box";
+import Slider from "@mui/material/Slider";
+
 import "./Bubble.css";
 import DATA from "../data/country_data.json";
 
@@ -59,6 +69,30 @@ function getFullName(code, type) {
     return indicatorFullName[code] || code;
   }
 }
+function hexToRGBA(hex, alpha = 1) {
+  hex = hex.replace(/^#/, "");
+  var r = parseInt(hex.slice(0, 2), 16),
+    g = parseInt(hex.slice(2, 4), 16),
+    b = parseInt(hex.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+const Legend = ({ countryColors, isoFullName }) => {
+  const alpha = 0.6;
+  return (
+    <div className="legend">
+      {Object.entries(countryColors).map(([countryCode, color]) => (
+        <div key={countryCode} className="legend-item">
+          <span
+            className="legend-color"
+            style={{ backgroundColor: hexToRGBA(color, alpha) }}
+          ></span>
+          <span className="legend-label">{isoFullName[countryCode]}</span>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const BubbleRender = {
   dom: null,
@@ -67,7 +101,7 @@ const BubbleRender = {
   innerWidth: 0,
   innerHeight: 0,
   bubbleContainer: null,
-  padding: [50, 60, 40, 60],
+  padding: [60, 80, 90, 80],
   xScale: null,
   yScale: null,
 
@@ -89,7 +123,7 @@ const BubbleRender = {
     this.renderAxes(data);
     this.renderGrid();
     this.renderLines();
-    this.renderAxisText();
+    this.renderAxisText(data);
   },
 
   renderAxes(data, indicator) {
@@ -97,12 +131,32 @@ const BubbleRender = {
     const { padding } = this;
     const { clientWidth, clientHeight } = this.dom;
 
+    const yValues = data.map((item) => item[1]);
+    const yMax = Math.max(...yValues);
+    const yMin = Math.min(...yValues, 0);
+
     this.yScale = d3
       .scaleLinear()
-
-      .domain([0, Math.max(...data.map((item) => item[1]))])
+      .domain([yMin, yMax])
       .range([this.innerHeight, 0])
       .nice();
+
+    const axisLeft = d3
+      .axisLeft(this.yScale)
+      .ticks(6)
+      .tickFormat(function (d) {
+        if (indicator === "CDA" || indicator === "NDA") {
+          return `${(d * 100).toFixed(2)}%`; // Format as percent for CDA and NDA
+        } else {
+          return d.toFixed(2); // Format as decimal for other indicators
+        }
+      });
+
+    this.svg
+      .append("g")
+      .attr("class", "axis axisLeft")
+      .attr("transform", `translate(${padding[3]},${padding[0]})`)
+      .call(axisLeft);
 
     this.xScale = d3
       .scaleLinear()
@@ -110,16 +164,9 @@ const BubbleRender = {
       .range([0, this.innerWidth])
       .nice();
 
-    const axixBottom = d3.axisBottom(this.xScale).tickFormat(function (d) {
-      return d / 100000 + "k";
+    const axisBottom = d3.axisBottom(this.xScale).tickFormat(function (d) {
+      return d / 1000 + "k";
     });
-
-    const axixLeft = d3
-      .axisLeft(this.yScale)
-      .ticks(6)
-      .tickFormat(function (d) {
-        return d * 100;
-      });
 
     this.svg
       .append("g")
@@ -128,22 +175,22 @@ const BubbleRender = {
         "transform",
         `translate(${padding[3]},${clientHeight - padding[2]})`
       )
-      .call(axixBottom);
-
-    this.svg
-      .append("g")
-      .attr("class", "axis axisLeft")
-      .attr("transform", `translate(${padding[3]},${padding[0]})`)
-      .call(axixLeft);
+      .call(axisBottom);
   },
 
-  renderAxisText() {
+  renderAxisText(indicator) {
+    console.log(
+      "Updating Y-axis label for:",
+      getFullName(indicator, "indicator")
+    );
+    this.svg.selectAll(".axis-text.indicator").remove();
+
     this.svg
       .append("text")
       .attr("class", "axis-text indicator")
       .attr("x", this.padding[0])
-      .attr("y", this.padding[3] - 25)
-      .text("CDA");
+      .attr("y", this.padding[3] - 40)
+      .text(getFullName(indicator, "indicator"));
 
     this.svg
       .append("text")
@@ -170,17 +217,27 @@ const BubbleRender = {
       .style("stroke", "red")
       .style("stroke-dasharray", "5,5");
   },
+
   renderGrid() {
     this.svg
       .append("g")
       .attr("class", "grid-lines")
-      .attr("transform", `translate(60, ${this.innerHeight + 50})`)
-      .call(d3.axisBottom(this.xScale).ticks(8).tickSize(-410).tickFormat(""));
+      .attr(
+        "transform",
+        `translate(${this.padding[3]}, ${this.innerHeight + this.padding[0]})`
+      )
+      .call(
+        d3
+          .axisBottom(this.xScale)
+          .ticks(8)
+          .tickSize(-this.innerHeight)
+          .tickFormat("")
+      );
 
     this.svg
       .append("g")
       .attr("class", "grid-lines")
-      .attr("transform", `translate(${60},${this.padding[0]})`)
+      .attr("transform", `translate(${this.padding[3]}, ${this.padding[0]})`)
       .call(
         d3
           .axisLeft(this.yScale)
@@ -189,6 +246,7 @@ const BubbleRender = {
           .tickFormat("")
       );
   },
+
   renderData(data, indicator) {
     d3.select(".bubble-svg-container").remove();
 
@@ -261,115 +319,155 @@ const BubbleRender = {
       });
   },
   renderIndicator(e, d) {},
-  dealWidthData(
-    countriesArg = countries,
-    yearsArg = ["2005"],
-    indicator = "CDA"
-  ) {
-    const data = [];
 
-    countriesArg.map((country) => {
-      yearsArg.map((year) => {
-        data.push([
-          DATA[country][year]["GDP"] || 1000000,
-          DATA[country][year][indicator],
-          {
-            ...DATA[country][year],
-            county: country,
-            year,
-          },
-        ]);
-      });
+  processData(countriesArg = countries, selectedYear, indicator = "CDA") {
+    const data = [];
+    const missingData = [];
+
+    countriesArg.forEach((country) => {
+      if (DATA[country] && DATA[country][selectedYear]) {
+        const value = DATA[country][selectedYear][indicator] || 0;
+        // Only add to the data array if the value is not zero
+        if (value !== -999) {
+          data.push([
+            DATA[country][selectedYear]["GDP"] || 1000000,
+            value,
+            {
+              ...DATA[country][selectedYear],
+              county: country,
+              year: selectedYear,
+            },
+          ]);
+        } else {
+          // Add to missing data array if the value is zero
+          missingData.push(country);
+        }
+      }
     });
-    console.log(data, "data==");
-    return data;
+
+    return { data, missingData };
   },
 };
 
 const Bubble = (props) => {
   const bubbleBox = useRef(null);
-  const [countys, setCountries] = useState();
-  const [year, setYear] = useState(["2005"]);
+  const [selectedCountries, setSelectedCountries] = useState(countries);
+  const [selectedYear, setSelectedYear] = useState(
+    Math.min(...years.map((y) => parseInt(y)))
+  );
   const [indicator, setIndicator] = useState("CDA");
+  const [missingDataCountries, setMissingDataCountries] = useState([]);
 
   useEffect(() => {
-    const data = BubbleRender.dealWidthData();
+    const { data, missingData } = BubbleRender.processData(
+      selectedCountries,
+      selectedYear,
+      indicator
+    );
+
+    setMissingDataCountries(missingData);
+
+    // Initialize data
     BubbleRender.init.call(BubbleRender, bubbleBox.current, data);
-    BubbleRender.renderData(data, indicator);
-  }, [bubbleBox]);
 
-  useEffect(() => {
-    const data = BubbleRender.dealWidthData(countys, year, indicator);
-    BubbleRender.renderAxes(data);
+    // Render data
     BubbleRender.renderData(data, indicator);
-    d3.select(".indicator").text(indicator + "(%)");
-  }, [year, indicator, countys]);
 
-  useEffect(() => {
-    const data = BubbleRender.dealWidthData(countys, year, indicator);
-    BubbleRender.renderAxes(data);
-    BubbleRender.renderData(data, indicator);
-    d3.select(".indicator").text(indicator + "(%)");
-  }, [year, indicator, countys]);
+    // Update axis
+    BubbleRender.renderAxes(data, indicator);
+
+    // Update axis label
+    BubbleRender.renderAxisText(indicator);
+  }, [bubbleBox, selectedYear, indicator, selectedCountries]);
+
+  const handleChangeCountries = (event) => {
+    setSelectedCountries(
+      typeof event.target.value === "string"
+        ? event.target.value.split(",")
+        : event.target.value
+    );
+  };
+
+  const handleChangeIndicator = (event) => {
+    setIndicator(event.target.value);
+  };
+
+  const handleSliderChange = (event, newValue) => {
+    setSelectedYear(newValue);
+  };
 
   return (
     <div>
       <div className="header">BUBBLE CHART</div>
       <div className="bubble-container">
+        {missingDataCountries.length > 0 && (
+          <div className="missing-data-message">
+            Data is missing for the following countries for the selected year
+            and indicator: {missingDataCountries.join(", ")}.
+          </div>
+        )}
         <div className="bubble-top">
-          <div>
+          <div className="selector">
             <span className="label">YEAR</span>
-            <Select
-              mode="multiple"
-              value={year}
-              options={years.map((item) => {
-                return { value: item, label: item };
-              })}
-              onChange={(value) => {
-                setYear(value);
-              }}
-            />
+            <Box sx={{ width: 300 }}>
+              <Slider
+                size="small"
+                value={selectedYear}
+                onChange={handleSliderChange}
+                valueLabelDisplay="auto"
+                aria-label="Year"
+                min={Math.min(...years)}
+                max={Math.max(...years)}
+                getAriaValueText={(value) => `${value}`}
+              />
+            </Box>
           </div>
-          <div style={{ marginLeft: "30px" }}>
+
+          <div className="selector">
             <span className="label">COUNTRIES</span>
-            <Select
-              mode="multiple"
-              options={countries.map((item) => {
-                return {
-                  value: item,
-                  label: isoFullName[item] || item,
-                };
-              })}
-              value={countys}
-              onChange={(value) => {
-                console.log(value, "value");
-                try {
-                  setCountries(value);
-                } catch (err) {
-                  console.log(err);
-                }
-              }}
-            />
+            <FormControl sx={{ m: 1, width: 300 }}>
+              <InputLabel>Countries</InputLabel>
+              <Select
+                multiple
+                value={selectedCountries}
+                onChange={handleChangeCountries}
+                input={<OutlinedInput label="Countries" />}
+                renderValue={(selected) => selected.join(", ")}
+              >
+                {countries.map((country) => (
+                  <MenuItem key={country} value={country}>
+                    <Checkbox
+                      checked={selectedCountries.indexOf(country) > -1}
+                    />
+                    <ListItemText primary={isoFullName[country] || country} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </div>
-          <div style={{ marginLeft: "30px" }}>
+
+          <div className="selector">
             <span className="label">INDICATOR</span>
-            <Select
-              defaultValue={"CDA"}
-              value={indicator}
-              options={indicatorList.map((item) => {
-                return {
-                  value: item.value,
-                  label: indicatorFullName[item.value] || item.label,
-                };
-              })}
-              onChange={(value) => {
-                console.log(value, "value");
-                setIndicator(value);
-              }}
-            />
+            <FormControl sx={{ m: 1, width: 300 }}>
+              <InputLabel id="demo-simple-select-label">Indicator</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={indicator}
+                onChange={handleChangeIndicator}
+                input={<OutlinedInput label="Indicator" />}
+              >
+                {indicatorList.map((item) => (
+                  <MenuItem key={item.value} value={item.value}>
+                    {indicatorFullName[item.value] || item.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </div>
         </div>
         <div className="bubble-bottom" ref={bubbleBox}></div>
+        <Legend countryColors={countryColors} isoFullName={isoFullName} />
         <div className="lineTooltip">
           <p>
             <span>Country</span>
