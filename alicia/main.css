@@ -7,7 +7,7 @@ body {
 select{
     appearance: none;
     -webkit-appearance: none;
-    border-radius: px;
+    border-radius: 0.5px;
     font-size: 12px;
     padding: 5px;
     width: 300px;
@@ -21,10 +21,9 @@ select:hover{
 
 button {
     background-color: white;
-    border: none;
-    border-radius: 0.5px;
-    color: #d84e51;
-    padding: 5px;
+    color: #0d2851;
+    border: 1px solid #0d2851;
+    border-radius: 0.5px;;
     text-align: center;
     text-decoration: none;
     font-size: 12px;
@@ -33,8 +32,7 @@ button {
 
 button:hover {
     transition: 0.3s;
-    color:white;
-    background-color: #d84e51;
+    background-color: aliceblue;
 
 }
 
