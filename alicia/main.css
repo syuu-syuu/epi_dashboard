@@ -1,4 +1,9 @@
-.label{
+body { 
+    background-color: #f0edee;
+    color: #0d2851;
     font-family: sans-serif;
+}
+
+.label{
     font-size: 10px;
 }
