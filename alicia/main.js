@@ -71,6 +71,10 @@ function setWEO(indicator) {
     retitle();
 };
 
+function deleteGraph(){
+    d3.select(".svg").remove();
+}
+
 class scatterPlot {
     constructor(parent_id) {
         this.div_id = parent_id;
@@ -91,7 +95,8 @@ class scatterPlot {
         this.svg = d3.select("#" + this.div_id).append("svg")
             .attr("height", this.height + 2 * this.margin)
             .attr("width", this.width + 2 * this.margin)
-
+            .attr("class", "svg")
+        
         //render
         this.rerender();
     }
@@ -281,13 +286,10 @@ class scatterPlot {
                     .attr("data-tippy-content", d => {
                         let html = "<table>" 
                         + "<tr><th colspan='2'>Country: " + d.country + "</th></tr>"
-                        // + "<tr><td>Appointment:</td><td>" + d.appointment + "</td></tr>"
-                        // + "<tr><td>Start:</td><td>" + d.start + "</td></tr>"
-                        // + "<tr><td>End:</td><td>" + d.end + "</td></tr>"
                         + "</table>"
                         return html;
                     })
-                    .call(selection => tippy(selection.nodes(), {allowHTML: true})) //for the things entered, call this (copy this if you use tooltips)
+                    .call(selection => tippy(selection.nodes(), {allowHTML: true}))
 
             })
 
