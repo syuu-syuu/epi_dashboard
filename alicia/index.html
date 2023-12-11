@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/simple-statistics@7.8.3/dist/simple-statistics.min.js"></script>
+    <script src="https://ils.unc.edu/~gotz/courses/js/p_value.js"></script>
+    <script src="main.js"></script>
+    <link rel="stylesheet" href="main.css">
+    <!-- tool tips -->
+    <!-- fonts -->
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- Title -->
+    <h1>EPI Ranking Indicator and Socioeconomic Trend Explorer</h1>
+    <!-- economy group, timeline slider -->
+    <p>Select an economy group:
+        <select id="economy-select" onchange="setEconomy(this.value)">
+            <option value="world">World</option>
+            <option value='euro-area'>Euro Area</option>
+            <option value='major-advanced'>Major Advanced Economies (G7)</option>
+            <option value="other-advanced">Other Advanced Economies</option>
+            <option value="ED-A">Emerging and Developing Asia</option>
+            <option value="ED-E">Emerging and Developing Europe</option>
+            <option value="LA-C">Latin America and the Caribbean</option>
+            <option value="ME-CA">Middle East and Central Asia</option>
+            <option value="SSA">Sub-Saharan Africa</option>
+        </select>
+    </p>
+    <div id="slider-container"><input type="range" min="2000" max="2019" value="1980" id="year-slider"></div>
+    <p id="year">Year: <span id="year-value">2000</span></p>
+    <!-- epi indicator dropdown and socioeconomic dropdown -->
+    <select id="epi-select" onchange="setEPI(this.value)">
+        <option value="resources/GIB_raw_na.csv">GHG Intensity Trend</option>
+        <option value="resources/CH4_raw_na.csv">CH4 Growth Rate</option>
+        <option value="resources/per-capita-emissions.csv">GHG Emissions per Capita</option>
+    </select>
+    <select id="weo-select" onchange="setWEO(this.value)">
+        <option value="resources/country-gdp-per-capita.csv">GDP per Capita</option>
+        <option value="resources/WEO_total_investment.csv">Total Investment</option>
+        <option value="resources/WEO_Unemployment.csv">Unemployment</option>
+    </select>
+    <button onclick="createGraph()">Add Graph</button>
+    <!-- Div for all the scatterplots -->
+    <div style="width: 100%; overflow: hidden;" id="svg_div"></div>
+    <script>
+        // vis = new scatterPlot("svg_div");
+        let slider = document.getElementById("year-slider");
+        slider.addEventListener('input', function () {
+            setYear(slider.value);
+        })
+    </script>
+</body>
+
+</html>
