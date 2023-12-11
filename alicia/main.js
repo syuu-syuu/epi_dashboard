@@ -83,6 +83,7 @@ class scatterPlot {
         this.width = 300;
         this.margin = 50;
 
+        //tableau10 color scheme
         this.economy_color = d3.scaleOrdinal()
             .domain(["world", "euro-area", "major-advanced", "other-advanced", "ED-A", "ED-E", "LA-C", "ME-CA", "SSA"])
             .range(["#1F77B4", "#FF7F0F", "#2BA02B", "#D62727", "#9467BD", "#8C564C", "#E377C1", "#7F7F7F", "#BCBD21"])
@@ -269,6 +270,14 @@ class scatterPlot {
                             let cyValue = this.y(cleanValue);
                             return !isNaN(cyValue) ? cyValue : null;
                         })
+                        .attr("data-tippy-content", d => {
+                            let html = "<table>" 
+                            + "<tr><th colspan='2'>Country: " + d.country + "</th></tr>"
+                            + "<tr><td>Economy:</td><td>" + d.economy + "</td></tr>"
+                            + "</table>"
+                            return html;
+                        })
+                        .call(selection => tippy(selection.nodes(), {allowHTML: true}))
                         .transition(300).style("fill-opacity", 1),
                     update => update.transition(300),
                     exit => exit.transition(300).style("fill-opacity", 0)
@@ -283,14 +292,6 @@ class scatterPlot {
                         let cxValue = this.x(cleanValue);
                         return !isNaN(cxValue) ? cxValue : null;
                     })
-                    .attr("data-tippy-content", d => {
-                        let html = "<table>" 
-                        + "<tr><th colspan='2'>Country: " + d.country + "</th></tr>"
-                        + "</table>"
-                        return html;
-                    })
-                    .call(selection => tippy(selection.nodes(), {allowHTML: true}))
-
             })
 
         })
