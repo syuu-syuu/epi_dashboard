@@ -15,11 +15,10 @@ const Navbar = () => {
                         <Link className="nav-link" to="/">Home</Link>
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to="alicia/index.html">Bubble Chart</Link> 
-                        {/* i have no idea how to link this */}
+                        <Link className="nav-link" to="/bubble">Bubble Chart</Link> 
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to="/bubble">Scatterplot Comparison</Link>
+                        <Link className="nav-link" to="alicia/index.html">Scatterplot Comparison</Link>
                     </li>
                     <li className="nav-item">
                         <Link className="nav-link" to="/world-map">World Map</Link>
