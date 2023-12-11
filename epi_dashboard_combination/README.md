@@ -1,5 +1,17 @@
 # React + Vite
 
+This website is built with React + Vite template.
+
+To start with, 
+
+1. download npm;
+
+2. Run $ npm install;
+
+3. Run $ npm run dev;
+
+Homepage should open automatically.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
