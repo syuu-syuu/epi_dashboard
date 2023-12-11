@@ -18,7 +18,7 @@ const Navbar = () => {
                         <Link className="nav-link" to="/bubble">Bubble Chart</Link> 
                     </li>
                     <li className="nav-item">
-                        <Link className="nav-link" to="alicia/index.html">Scatterplot Comparison</Link>
+                        <Link className="nav-link" to="/scatterplots">Scatterplot Comparison</Link>
                     </li>
                     <li className="nav-item">
                         <Link className="nav-link" to="/world-map">World Map</Link>
