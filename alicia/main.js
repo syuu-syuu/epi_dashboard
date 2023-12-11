@@ -263,7 +263,8 @@ class scatterPlot {
                             let cleanValue = parseFloat(weoYearValue.replace(/,/g, ''));
                             let cyValue = this.y(cleanValue);
                             return !isNaN(cyValue) ? cyValue : null;
-                        }).transition(300).style("fill-opacity", 1),
+                        })
+                        .transition(300).style("fill-opacity", 1),
                     update => update.transition(300),
                     exit => exit.transition(300).style("fill-opacity", 0)
                         .remove()
@@ -277,6 +278,17 @@ class scatterPlot {
                         let cxValue = this.x(cleanValue);
                         return !isNaN(cxValue) ? cxValue : null;
                     })
+                    .attr("data-tippy-content", d => {
+                        let html = "<table>" 
+                        + "<tr><th colspan='2'>Country: " + d.country + "</th></tr>"
+                        // + "<tr><td>Appointment:</td><td>" + d.appointment + "</td></tr>"
+                        // + "<tr><td>Start:</td><td>" + d.start + "</td></tr>"
+                        // + "<tr><td>End:</td><td>" + d.end + "</td></tr>"
+                        + "</table>"
+                        return html;
+                    })
+                    .call(selection => tippy(selection.nodes(), {allowHTML: true})) //for the things entered, call this (copy this if you use tooltips)
+
             })
 
         })
