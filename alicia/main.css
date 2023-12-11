@@ -4,6 +4,40 @@ body {
     font-family: sans-serif;
 }
 
+select{
+    appearance: none;
+    -webkit-appearance: none;
+    border-radius: px;
+    font-size: 12px;
+    padding: 5px;
+    width: 300px;
+    background-color: white;
+}
+
+select:hover{
+    background-color: aliceblue;
+    transition: 0.3s;
+}
+
+button {
+    background-color: white;
+    border: none;
+    border-radius: 0.5px;
+    color: #d84e51;
+    padding: 5px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+button:hover {
+    transition: 0.3s;
+    color:white;
+    background-color: #d84e51;
+
+}
+
 .label{
     font-size: 10px;
 }

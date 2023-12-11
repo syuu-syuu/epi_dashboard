@@ -33,8 +33,6 @@ function setEconomy(group) {
 
     //unsure
     retitle();
-    update();
-
 };
 
 //sets year value
@@ -74,7 +72,6 @@ function setWEO(indicator) {
 };
 
 class scatterPlot {
-
     constructor(parent_id) {
         this.div_id = parent_id;
 
@@ -100,7 +97,6 @@ class scatterPlot {
     }
 
     rerender() {
-
         //data
         //y is gdp
         d3.csv(y_url, d => { //y is weo
