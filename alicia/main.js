@@ -1,47 +1,53 @@
-let x_label = "";
+//global variables and default values
 let economy = "world";
-let economy_title = "World";
+
 let year = 2000;
 let count = 0;
+
 let x_url = "resources/GIB_raw_na.csv" //epi
 let y_url = "resources/country-gdp-per-capita.csv" //weo
+
+let economy_title = "World";
 let label_x = "GHG Intensity Trend";
 let label_y = "GDP per Capita";
-let title = "World in " + year + ": " + label_x + " vs. " + label_y;
-let name = "graph" + count;
-let graphs = {};
+let title = economy_title + " in " + year + ": " + label_x + " vs. " + label_y;
 
+//called when add graph is clicked
 function createGraph() {
     count++;
-    // this.name = "vis" + count;
-    // this[this.name] = new scatterPlot("svg_div");
-    graphs[name] = new scatterPlot("svg_div");
+    this.name = "vis" + count;
+    this[this.name] = new scatterPlot("svg_div");
 }
 
+//updates title name
 function retitle() {
     title = economy_title + " in " + year + ": " + label_x + " vs. " + label_y;
-    console.log(title);
 }
 
+//updates economy value
 function setEconomy(group) {
     economy = group;
 
     const selectElement = document.getElementById("economy-select");
     economy_title = selectElement.options[selectElement.selectedIndex].innerHTML;
-    retitle();
 
+    //unsure
+    retitle();
 };
 
+//sets year value
 function setYear(year_input) {
+    console.log("rerender reached")
     let slider = document.getElementById("year-slider");
     let output = document.getElementById("year-value");
     output.innerHTML = slider.value;
-    
+
     year = year_input;
     retitle();
-    graphs[name].update();
+    this[this.name].update();
 };
 
+//sets x data
 function setEPI(indicator) {
     console.log("epi set")
     x_url = indicator; //epi
@@ -53,6 +59,7 @@ function setEPI(indicator) {
     retitle();
 };
 
+//sets y data
 function setWEO(indicator) {
     console.log("weo set")
     y_url = indicator; //weo
@@ -68,9 +75,8 @@ class scatterPlot {
     constructor(parent_id) {
         this.div_id = parent_id;
 
-        //margins and dimensions
-        this.height = 250;
-        this.width = 250;
+        this.height = 300;
+        this.width = 300;
         this.margin = 50;
 
         this.economy_color = d3.scaleOrdinal()
@@ -81,6 +87,7 @@ class scatterPlot {
     }
 
     addGraph() {
+        //appends svg only
         this.svg = d3.select("#" + this.div_id).append("svg")
             .attr("height", this.height + 2 * this.margin)
             .attr("width", this.width + 2 * this.margin)
@@ -90,11 +97,10 @@ class scatterPlot {
     }
 
     rerender() {
-       
         //data
         //y is gdp
         d3.csv(y_url, d => { //y is weo
-            //filter out the years, 
+            //filter out the years from the dataset
             let years = Object.keys(d).filter(key => !isNaN(parseInt(key)) && parseInt(key) >= 1980)
             return {
                 economy: d.country_group,
@@ -109,6 +115,7 @@ class scatterPlot {
             }
         }).then(data => { //after the promise
             this.filtered_y = data.filter(item => { //y is weo
+                //filter to selected
                 if (economy == "world") {
                     return true;
                 } else {
@@ -116,7 +123,7 @@ class scatterPlot {
                 }
             })
             console.log("this filtered y", this.filtered_y);
-            // //processing x aka epi data
+            //processing x aka epi data
             this.x_data = d3.csv(x_url, d => {
                 let years = Object.keys(d).filter(key => !isNaN(parseInt(key)) && parseInt(key) >= 1980);
                 return {
@@ -130,6 +137,7 @@ class scatterPlot {
                     }, d => d.iso)
                 }
             }).then(data => {
+                //uses iso codes included in y data to get matching x data- essentially filtering to economy group still
                 let iso = this.filtered_y.map(d => d.iso);
 
                 this.filtered_x = data.filter(d => {
@@ -144,6 +152,7 @@ class scatterPlot {
                     }
                 });
 
+                //returns 0 on missing values- only numbers
                 let x_year_values = this.filtered_x.map(item => item.epi_year);
                 let x_values = x_year_values.map(yearData => {
                     let val = yearData[year];
@@ -154,6 +163,7 @@ class scatterPlot {
                     return numericVal;
                 })
 
+                //returns 0 on missing values
                 let y_year_values = this.filtered_y.map(item => item.weo_year);
                 let y_values = y_year_values.map(yearData => {
                     let val = yearData[year];
@@ -164,23 +174,16 @@ class scatterPlot {
                     return numericVal;
                 })
 
-                console.log("xvals", this.filtered_x)
-                console.log('yval', this.filtered_y)
-
-
+                //using simple statistics to calculate r^2 and correlation coefficient
                 let corr_coeff = ss.sampleCorrelation(x_values, y_values);
+
                 let zip = d3.zip(x_values, y_values);
-                console.log("zip", zip)
 
                 let linear_model = ss.linearRegression(zip);
                 let linear_generator = ss.linearRegressionLine(linear_model)
                 let r_squared = ss.rSquared(zip, linear_generator);
 
-                console.log()
-
-                console.log("r sqaured", r_squared);
-                console.log("corrcoeff", corr_coeff);
-
+                //min and maxes calculated for scale somains
                 let x_min = ss.min(x_values);
                 let x_max = ss.max(x_values);
 
@@ -198,6 +201,7 @@ class scatterPlot {
                     .range([this.height, 0])
                     .nice()
 
+                //g for holding together graph, axes, and labels
                 this.g = this.svg.append("g")
                     .attr("transform", "translate(" + this.margin + ",  " + this.margin + ")")
                     .attr("class", "graph")
@@ -228,10 +232,24 @@ class scatterPlot {
 
                 this.g.append("text")
                     .attr("class", "label")
+                    .attr("id", "title")
                     .attr("x", 0)
                     .attr("y", -10)
                     .text(title)
 
+                this.g.append("text")
+                    .attr("class", "label")
+                    .attr("x", 0)
+                    .attr("y", this.height + this.margin / 2)
+                    .text("R2: " + r_squared.toFixed(2));
+
+                this.g.append("text")
+                    .attr("class", "label")
+                    .attr("x", 0)
+                    .attr("y", this.height + this.margin * 0.75)
+                    .text("Correlation: " + corr_coeff.toFixed(2));
+
+                //dots!
                 let circles = this.g.selectAll(".dot").data(this.filtered_y, d => d.iso); //y is weo
 
                 circles.join( //y is weo
@@ -259,18 +277,6 @@ class scatterPlot {
                         let cxValue = this.x(cleanValue);
                         return !isNaN(cxValue) ? cxValue : null;
                     })
-
-                this.g.append("text")
-                    .attr("class", "label")
-                    .attr("x", 0)
-                    .attr("y", this.height + this.margin / 2)
-                    .text("R2: " + r_squared.toFixed(2));
-
-                this.g.append("text")
-                    .attr("class", "label")
-                    .attr("x", 0)
-                    .attr("y", this.height + this.margin*0.75)
-                    .text("Correlation: " + corr_coeff.toFixed(2));
             })
 
         })
@@ -298,5 +304,7 @@ class scatterPlot {
                 let cxValue = this.x(cleanValue);
                 return !isNaN(cxValue) ? cxValue : null;
             })
+        this.g.select("#title")
+            .text(title)
     }
 }
