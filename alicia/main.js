@@ -12,6 +12,10 @@ let label_x = "GHG Intensity Trend";
 let label_y = "GDP per Capita";
 let title = economy_title + " in " + year + ": " + label_x + " vs. " + label_y;
 
+//stats
+let corr_coeff = 0;
+let r_squared = 0;
+
 //called when add graph is clicked
 function createGraph() {
     count++;
@@ -181,13 +185,13 @@ class scatterPlot {
                 })
 
                 //using simple statistics to calculate r^2 and correlation coefficient
-                let corr_coeff = ss.sampleCorrelation(x_values, y_values);
+                corr_coeff = ss.sampleCorrelation(x_values, y_values);
 
                 let zip = d3.zip(x_values, y_values);
 
                 let linear_model = ss.linearRegression(zip);
                 let linear_generator = ss.linearRegressionLine(linear_model)
-                let r_squared = ss.rSquared(zip, linear_generator);
+                r_squared = ss.rSquared(zip, linear_generator);
 
                 //min and maxes calculated for scale somains
                 let x_min = ss.min(x_values);
@@ -245,12 +249,14 @@ class scatterPlot {
 
                 this.g.append("text")
                     .attr("class", "label")
+                    .attr("id", "rSquared")
                     .attr("x", 0)
                     .attr("y", this.height + this.margin / 2)
                     .text("R2: " + r_squared.toFixed(2));
 
                 this.g.append("text")
                     .attr("class", "label")
+                    .attr("id", "corrCoeff")
                     .attr("x", 0)
                     .attr("y", this.height + this.margin * 0.75)
                     .text("Correlation: " + corr_coeff.toFixed(2));
@@ -321,5 +327,9 @@ class scatterPlot {
             })
         this.g.select("#title")
             .text(title)
+        this.g.select("#rSquared")
+            .text(r_squared.toFixed(2))
+        this.g.select("#corrCoeff")
+            .text(corr_coeff.toFixed(2))
     }
 }
