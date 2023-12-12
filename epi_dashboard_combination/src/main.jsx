@@ -21,7 +21,7 @@ ReactDOM.createRoot(rootElement).render(
                 <Route exact path="/" element={<Homepage />} />
                 <Route path="/bubble" element={<Bubble />} />
                 <Route path="/world-map" element={<WorldMap />} />
-                <Route path="/scatterplots" element={<ScatterPlot />} />
+                {/* <Route path="/scatterplots" element={<ScatterPlot />} /> */}
                 {/* unsure how to link scatterplots */}
             </Routes>
         </React.StrictMode>
