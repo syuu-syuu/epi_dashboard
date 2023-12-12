@@ -18,7 +18,8 @@ const Navbar = () => {
                         <Link className="nav-link" to="/bubble">Bubble Chart</Link> 
                     </li>
                     <li className="nav-item">
-                        {/* <Link className="nav-link" to="/scatterplots">Scatterplot Comparison</Link> */}
+                        {/* <Link className="nav-link" to={{ pathname: "https://opal.ils.unc.edu/~albao/inls-641/final/alicia/" }} target="_blank">Scatterplot Trend</Link> */}
+                        <a className="nav-link" href="https://opal.ils.unc.edu/~albao/inls-641/final/alicia/" target="_blank" rel="noopener noreferrer">Scatterplot Trend</a>
                     </li>
                     <li className="nav-item">
                         <Link className="nav-link" to="/world-map">World Map</Link>
