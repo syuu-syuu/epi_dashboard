@@ -7,7 +7,8 @@ import {
 } from 'react-simple-maps';
 import Papa from 'papaparse';
 import { scaleLinear } from 'd3-scale';
-import { interpolateRdYlGn } from 'd3-scale-chromatic';
+import { interpolateRdYlGn, interpolateRdYlBu } from 'd3-scale-chromatic';
+
 
 const WorldMap = () => {
   const [co2Data, setCO2Data] = useState([]);
@@ -35,17 +36,26 @@ const WorldMap = () => {
 
     fetchCSVData();
   }, [selectedCSV]);
-  const getColorScale = () => {
-    const co2Values = co2Data.map((item) => parseFloat(item[selectedYear])).filter((value) => !isNaN(value));
 
-    // Calculate the actual minimum and maximum CO2 values from the dataset
+  const [selectedColorSystem, setSelectedColorSystem] = useState('redGreen');
+
+  // New function to get color scale based on the selected color system
+  const getColorScale = () => {
+    const co2Values = co2Data
+        .map((item) => parseFloat(item[selectedYear]))
+        .filter((value) => !isNaN(value));
+
     const minValue = Math.min(...co2Values);
     const maxValue = Math.max(...co2Values);
 
-    // Create a color scale using d3-scale based on the actual range of CO2 emissions
-    return scaleLinear()
-        .domain([minValue, maxValue])
-        .range([interpolateRdYlGn(0), interpolateRdYlGn(1)]);
+    // Color scales for red/green and blue/white systems
+    const colorScales = {
+      redGreen: scaleLinear().domain([minValue, maxValue]).range([interpolateRdYlGn(0), interpolateRdYlGn(1)]),
+      blueWhite: scaleLinear().domain([minValue, maxValue]).range(['blue', 'white']), // Update the color range for blue/white
+    };
+
+    // Return the appropriate color scale based on the selectedColorSystem state
+    return colorScales[selectedColorSystem];
   };
 
   const getFillColor = (countryName) => {
@@ -57,7 +67,6 @@ const WorldMap = () => {
       return '#D3D3D3'; // Fallback color for countries without CO2 data or invalid values (grey color)
     }
 
-
     const co2Value = parseFloat(countryCO2[selectedYear]);
 
     const colorScale = getColorScale();
@@ -65,6 +74,28 @@ const WorldMap = () => {
     return colorScale(co2Value);
   };
 
+
+  const handleColorSystemChange = (event) => {
+    setSelectedColorSystem(event.target.value);
+  };
+
+  // Options for color system selection
+  const colorSystemOptions = [
+    { value: 'redGreen', label: 'Red/Green' },
+    { value: 'blueWhite', label: 'Blue/White' },
+  ];
+
+
+  // Dropdown selector for choosing color system
+  const colorSystemSelector = (
+      <select value={selectedColorSystem} onChange={handleColorSystemChange}>
+        {colorSystemOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+        ))}
+      </select>
+  );
 
   const handleYearChange = (event) => {
     setSelectedYear(event.target.value);
@@ -98,11 +129,26 @@ const WorldMap = () => {
       </select>
   );
 
+  const [tooltipContent, setTooltipContent] = useState(null);
+
+// Function to handle mouse enter event
+  const handleMouseEnter = (geo, e) => {
+    const { name } = geo.properties;
+    setTooltipContent(name);
+  };
+
+// Function to handle mouse leave event
+  const handleMouseLeave = () => {
+    setTooltipContent(null);
+  };
+
+
   return (
       <div style={{ width: '100%', height: '100vh', textAlign: 'center' }}>
         <div style={{ marginBottom: '10px' }}>
           {/* Add CSV selector */}
           {csvSelector}
+          {colorSystemSelector}
         </div>
         <div style={{ marginBottom: '10px' }}>
           <span style={{ marginRight: '10px' }}>1750</span>
@@ -134,16 +180,31 @@ const WorldMap = () => {
                     let fillColor = getFillColor(countryName);
 
                     return (
-                        <Geography
-                            key={geo.rsmKey}
-                            geography={geo}
-                            fill={fillColor}
-                            stroke="#D6D6DA"
-                        />
+                        <React.Fragment key={geo.rsmKey}>
+                          <Geography
+                              geography={geo}
+                              onMouseEnter={(e) => handleMouseEnter(geo, e)}
+                              onMouseLeave={handleMouseLeave}
+                              fill={fillColor}
+                              stroke="#D6D6DA"
+                          />
+                          {tooltipContent === countryName && geo.centroid && ( // Added a check for geo.centroid
+                              <text
+                                  x={geo.centroid[0]}
+                                  y={geo.centroid[1]}
+                                  style={{ fontFamily: 'Arial', fontSize: 12, pointerEvents: 'none' }}
+                                  textAnchor="middle"
+                                  fill="#333"
+                              >
+                                {countryName}
+                              </text>
+                          )}
+                        </React.Fragment>
                     );
                   })
               }
             </Geographies>
+
           </ZoomableGroup>
         </ComposableMap>
       </div>
