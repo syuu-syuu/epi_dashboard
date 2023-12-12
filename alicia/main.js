@@ -13,8 +13,8 @@ let label_y = "GDP per Capita";
 let title = economy_title + " in " + year + ": " + label_x + " vs. " + label_y;
 
 //stats
-let corr_coeff = 0;
-let r_squared = 0;
+this.corr_coeff = 0;
+this.r_squared = 0;
 
 //called when add graph is clicked
 function createGraph() {
@@ -164,7 +164,7 @@ class scatterPlot {
 
                 //returns 0 on missing values- only numbers
                 let x_year_values = this.filtered_x.map(item => item.epi_year);
-                let x_values = x_year_values.map(yearData => {
+                this.x_values = x_year_values.map(yearData => {
                     let val = yearData[year];
                     let numericVal = parseFloat(val.replace(/,/g, ''));
                     if (isNaN(numericVal)) {
@@ -175,7 +175,7 @@ class scatterPlot {
 
                 //returns 0 on missing values
                 let y_year_values = this.filtered_y.map(item => item.weo_year);
-                let y_values = y_year_values.map(yearData => {
+                this.y_values = y_year_values.map(yearData => {
                     let val = yearData[year];
                     let numericVal = parseFloat(val.replace(/,/g, ''));
                     if (isNaN(numericVal)) {
@@ -185,20 +185,20 @@ class scatterPlot {
                 })
 
                 //using simple statistics to calculate r^2 and correlation coefficient
-                corr_coeff = ss.sampleCorrelation(x_values, y_values);
+                this.corr_coeff = ss.sampleCorrelation(this.x_values, this.y_values);
 
-                let zip = d3.zip(x_values, y_values);
+                let zip = d3.zip(this.x_values, this.y_values);
 
                 let linear_model = ss.linearRegression(zip);
                 let linear_generator = ss.linearRegressionLine(linear_model)
-                r_squared = ss.rSquared(zip, linear_generator);
+                this.r_squared = ss.rSquared(zip, linear_generator);
 
-                //min and maxes calculated for scale somains
-                let x_min = ss.min(x_values);
-                let x_max = ss.max(x_values);
+                //min and maxes calculated for scale domains
+                let x_min = ss.min(this.x_values);
+                let x_max = ss.max(this.x_values);
 
-                let y_min = ss.min(y_values);
-                let y_max = ss.max(y_values);
+                let y_min = ss.min(this.y_values);
+                let y_max = ss.max(this.y_values);
 
                 //scales
                 this.x = d3.scaleLinear()
@@ -252,14 +252,14 @@ class scatterPlot {
                     .attr("id", "rSquared")
                     .attr("x", 0)
                     .attr("y", this.height + this.margin / 2)
-                    .text("R2: " + r_squared.toFixed(2));
+                    .text("R^2: " + this.r_squared.toFixed(2));
 
                 this.g.append("text")
                     .attr("class", "label")
                     .attr("id", "corrCoeff")
                     .attr("x", 0)
                     .attr("y", this.height + this.margin * 0.75)
-                    .text("Correlation: " + corr_coeff.toFixed(2));
+                    .text("Correlation: " + this.corr_coeff.toFixed(2));
 
                 //dots!
                 let circles = this.g.selectAll(".dot").data(this.filtered_y, d => d.iso); //y is weo
@@ -325,11 +325,12 @@ class scatterPlot {
                 let cxValue = this.x(cleanValue);
                 return !isNaN(cxValue) ? cxValue : null;
             })
+
         this.g.select("#title")
             .text(title)
         this.g.select("#rSquared")
-            .text(r_squared.toFixed(2))
+            .text("R^2: "+this.r_squared.toFixed(2))
         this.g.select("#corrCoeff")
-            .text(corr_coeff.toFixed(2))
+            .text("Correlation: "+this.corr_coeff.toFixed(2))
     }
 }

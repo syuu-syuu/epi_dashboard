@@ -46,10 +46,12 @@
         <option value="resources/WEO_total_investment.csv">Total Investment</option>
         <option value="resources/WEO_Unemployment.csv">Unemployment</option>
     </select>
-    <div id="slider-container"><input type="range" min="2000" max="2019" value="1980" id="year-slider"></div>
-    <p id="year">3. Year: <span id="year-value">2000</span></p>
+    <p>3. Add Graph</p>
     <button onclick="createGraph()">Add Graph</button>
     <button onclick="deleteGraph()">Delete Last Graph</button>
+    <p id="year">4. Year: <span id="year-value">2000</span></p>
+    <div id="slider-container"><input type="range" min="2000" max="2019" value="1980" id="year-slider"></div>
+   
     <!-- Div for all the scatterplots -->
     <div style="width: 100%; overflow: hidden;" id="svg_div"></div>
     <script>
