@@ -39,3 +39,16 @@ button:hover {
 .label{
     font-size: 10px;
 }
+
+.tippy-box {
+	background-color: #000000;
+	color: #ffffff;
+	font-family: sans-serif;
+	padding: 0px;
+	border-radius: 3px;
+	opacity: 0.8;
+}
+.tippy-box table {
+	font-size: 8pt;
+	color: white;
+}
